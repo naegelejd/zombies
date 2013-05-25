@@ -33,11 +33,9 @@ TAGS
 tags
 !tags/
 
-# Images
-*.png
-*.jpg
-
 *.pdf
+# Pixen spritesheet maker
+*.pxi
 
 # Directories
 bin/
