@@ -31,52 +31,33 @@ int main(int argc, char *argv[])
         return EXIT_FAILURE;
     }
 
-    BAMF::Configurator configurator;
+    BAMF::Engine engine;
 
-    lua_register(configurator.L, "test", test);
+    BAMF::Configurator& configurator = engine.getConfigurator();
+    //configurator.registerFunction("test", test);
 
-    if (luaL_dofile(configurator.L, argv[1]) != 0) {
-        fprintf(stderr, "Failed to load/run file\n");
-        return EXIT_FAILURE;
-    }
+    engine.config(argv[1]);
 
-    lua_getglobal(configurator.L, "title");
-    const char *title = lua_tostring(configurator.L, -1);
-    if (!title) {
-        fprintf(stderr, "Failed to read 'title' from config\n");
-        return EXIT_FAILURE;
-    }
+    engine.start(512, 384, "My Game!");
 
-    lua_getglobal(configurator.L, "res");
-    const char *res = lua_tostring(configurator.L, -1);
-    if (!res) {
-        fprintf(stderr, "Failed to read 'res' from config\n");
-        return EXIT_FAILURE;
-    }
-    std::string resources(res);
+    sf::Thread thread(&BAMF::Engine::load, &engine);
+    //engine.load();
+    thread.launch();
+    thread.wait();
 
-    //BAMF::Engine engine(512, 384, "My Game!");
-    BAMF::Engine engine("My Game!");
-    BAMF::Resourcer resourcer = engine.getResourcer();
-    //BAMF::Inputter inputter = engine.getInputter();
+    BAMF::Resourcer& resourcer = engine.getResourcer();
 
-    resourcer.loadFont("/System/Library/Fonts/Menlo.ttc", "menlo");
-
-    sf::Text text;
-    text.setFont(resourcer.getFont("menlo"));
+    sf::Text text("Loading...", resourcer.getFont("menlo"));
     text.setCharacterSize(24);
     text.setColor(sf::Color::White);
-    text.setStyle(sf::Text::Bold | sf::Text::Underlined);
+    //text.setStyle(sf::Text::Bold | sf::Text::Underlined);
 
-    resourcer.loadTexture(resources + "/player.png", "player");
-
+    sf::Texture pt = resourcer.getTexture("player");
     Player player;
     player.setTexture(resourcer.getTexture("player"));
     player.setTextureRect(sf::IntRect(0, 0, 32, 32));
 
     engine.addActor(&player);
-
-    resourcer.loadTexture(resources + "/zombie.png", "zombie");
 
     Flock flock;
     for (int i = 0; i < 10; i++) {

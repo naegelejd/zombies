@@ -7,6 +7,9 @@ extern "C" {
 #include "lualib.h"
 }
 
+#include <map>
+#include <iostream>
+
 namespace BAMF {
 
 class Configurator {
@@ -14,8 +17,22 @@ class Configurator {
         Configurator();
         ~Configurator();
 
-    //private:
+        void registerFunction(const std::string&, lua_CFunction);
+        void readConfig(const std::string& path);
+
+        void loadTable(const char *tbl);
+
+        const std::string& getString(const std::string&);
+        const std::map<std::string, std::string>& getTable(const std::string&);
+
+    private:
+        Configurator(const Configurator&);
+        Configurator& operator=(const Configurator&);
+
         lua_State *L;
+
+        std::map<std::string, std::string> strings;
+        std::map<std::string, std::map<std::string, std::string> > tables;
 };
 
 } // namespace BAMF

@@ -16,7 +16,6 @@ include_directories(${SFML_INCLUDE_DIR} ${LUA_INCLUDE_DIR})
 add_executable(game
     main.cpp
     engine.cpp
-    logger.cpp
     configurator.cpp
     resourcer.cpp
     inputter.cpp

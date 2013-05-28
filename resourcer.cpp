@@ -11,36 +11,39 @@ Resourcer::Resourcer()
 
 Resourcer::~Resourcer() { }
 
-void Resourcer::loadTexture(std::string path, std::string name)
+void Resourcer::setResourceDir(const std::string& res)
 {
-    sf::Texture texture;
-    if (!texture.loadFromFile(path)) {
-        std::cerr << "Failed to load texture at: " << path << std::endl;
-    } else {
-        textures[name] = texture;
+    resource_directory = res;
+}
+
+void Resourcer::loadTextures(const std::map<std::string, std::string>& paths)
+{
+    textureLoader.loadFromMap(resource_directory, paths);
+}
+
+void Resourcer::loadFonts(const std::map<std::string, std::string>& paths)
+{
+    fontLoader.loadFromMap(resource_directory, paths);
+}
+
+const sf::Texture& Resourcer::getTexture(const std::string& name)
+{
+    try {
+        return textureLoader.getResource(name);
+    } catch (const std::exception& err) {
+        std::cerr << "Failed to get texture " << name << std::endl;
+        exit(EXIT_FAILURE);
     }
 }
 
-sf::Texture& Resourcer::getTexture(std::string name)
+const sf::Font& Resourcer::getFont(const std::string& name)
 {
-    // this may throw an exception
-    return textures.at(name);
-}
-
-void Resourcer::loadFont(std::string path, std::string name)
-{
-    sf::Font font;
-    if (!font.loadFromFile(path)) {
-        std::cerr << "Error loading font from: " << path << std::endl;
-    } else {
-        fonts[name] = font;
+    try {
+        return fontLoader.getResource(name);
+    } catch (const std::exception& err) {
+        std::cerr << "Failed to get font " << name << std::endl;
+        exit(EXIT_FAILURE);
     }
-}
-
-sf::Font& Resourcer::getFont(std::string name)
-{
-    // this may throw an exception
-    return fonts.at(name);
 }
 
 } // namespace BAMF
