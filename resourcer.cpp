@@ -1,6 +1,6 @@
 #include <iostream>
 
-#include "Resourcer.h"
+#include "resourcer.h"
 
 namespace BAMF {
 

@@ -1,19 +1,19 @@
 #include <SFML/Graphics.hpp>
 
-#include "PlayState.h"
+#include "loadstate.h"
 
 namespace BAMF {
 
-PlayState::PlayState()
+LoadState::LoadState()
 {
 }
 
-PlayState::~PlayState()
+LoadState::~LoadState()
 {
 
 }
 
-void PlayState::update(void)
+void LoadState::update(void)
 {
     std::vector<Actor*>::iterator iter;
     for (iter = actors.begin(); iter != actors.end(); ++iter) {
@@ -21,7 +21,7 @@ void PlayState::update(void)
     }
 }
 
-void PlayState::render(sf::RenderWindow& win)
+void LoadState::render(sf::RenderWindow& win)
 {
     std::vector<Actor*>::iterator iter;
     for (iter = actors.begin(); iter != actors.end(); ++iter) {
@@ -29,7 +29,7 @@ void PlayState::render(sf::RenderWindow& win)
     }
 }
 
-void PlayState::add(Actor* actor)
+void LoadState::add(BAMF::Actor* actor)
 {
     actors.push_back(actor);
 }

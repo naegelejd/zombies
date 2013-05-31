@@ -1,7 +1,7 @@
 #ifndef STATE_H
 #define STATE_H
 
-#include "Actor.h"
+#include "actor.h"
 
 namespace BAMF {
 

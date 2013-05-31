@@ -3,7 +3,7 @@
 
 #include <SFML/Graphics.hpp>
 
-#include "Zombie.h"
+#include "zombie.h"
 
 class Flock : public BAMF::Actor {
     public:

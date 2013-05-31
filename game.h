@@ -3,7 +3,7 @@
 
 #include <stack>
 
-#include "State.h"
+#include "state.h"
 
 namespace BAMF {
 

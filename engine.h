@@ -3,11 +3,9 @@
 
 #include <SFML/Graphics.hpp>
 
-#include "Logger.h"
-#include "Configurator.h"
-#include "Resourcer.h"
-#include "Inputter.h"
-#include "Actor.h"
+#include "logger.h"
+#include "inputter.h"
+#include "actor.h"
 
 namespace BAMF {
 

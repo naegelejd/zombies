@@ -1,6 +1,6 @@
 #include <cmath>
 
-#include "Player.h"
+#include "player.h"
 
 Player::Player()
     : BAMF::Actor()

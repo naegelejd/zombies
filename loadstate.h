@@ -1,7 +1,7 @@
 #ifndef LOAD_STATE_H
 #define LOAD_STATE_H
 
-#include "State.h"
+#include "state.h"
 
 namespace BAMF {
 

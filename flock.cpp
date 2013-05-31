@@ -1,7 +1,7 @@
 #include <cmath>
 #include <iostream>
 
-#include "Flock.h"
+#include "flock.h"
 
 Flock::Flock()
     : BAMF::Actor()

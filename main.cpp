@@ -5,14 +5,14 @@
 #include <SFML/Graphics.hpp>
 #include <SFML/System.hpp>
 
-#include "Configurator.h"
-#include "Resourcer.h"
-#include "Game.h"
-#include "LoadState.h"
-#include "PlayState.h"
-#include "Player.h"
-#include "Zombie.h"
-#include "Flock.h"
+#include "configurator.h"
+#include "resourcer.h"
+#include "game.h"
+#include "loadstate.h"
+#include "playstate.h"
+#include "player.h"
+#include "zombie.h"
+#include "flock.h"
 
 
 static int test(lua_State *L)

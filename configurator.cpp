@@ -1,6 +1,6 @@
 #include <stdexcept>
 
-#include "Configurator.h"
+#include "configurator.h"
 
 namespace BAMF {
 

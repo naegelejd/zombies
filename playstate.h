@@ -1,7 +1,7 @@
 #ifndef PLAY_STATE_H
 #define PLAY_STATE_H
 
-#include "State.h"
+#include "state.h"
 
 namespace BAMF {
 

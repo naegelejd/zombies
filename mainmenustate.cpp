@@ -1,6 +1,6 @@
 #include <SFML/Graphics.hpp>
 
-#include "MainMenuState.h"
+#include "mainmenustate.h"
 
 namespace BAMF {
 

@@ -14,17 +14,17 @@ add_subdirectory(ext)
 include_directories(${SFML_INCLUDE_DIR} ${LUA_INCLUDE_DIR})
 
 add_executable(game
-    Main.cpp
-    Game.cpp
-    LoadState.cpp
-    MainMenuState.cpp
-    PlayState.cpp
-    Button.cpp
-    Configurator.cpp
-    Resourcer.cpp
-    Inputter.cpp
-    Player.cpp
-    Zombie.cpp
-    Flock.cpp)
+    main.cpp
+    game.cpp
+    loadState.cpp
+    mainMenuState.cpp
+    playState.cpp
+    button.cpp
+    configurator.cpp
+    resourcer.cpp
+    inputter.cpp
+    player.cpp
+    zombie.cpp
+    flock.cpp)
 
 target_link_libraries(game ${SFML_LIBRARIES} lua)

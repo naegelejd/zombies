@@ -1,8 +1,8 @@
 #ifndef MAIN_MENU_STATE_H
 #define MAIN_MENU_STATE_H
 
-#include "State.h"
-#include "Button.h"
+#include "state.h"
+#include "button.h"
 
 namespace BAMF {
 
