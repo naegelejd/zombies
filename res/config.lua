@@ -4,7 +4,7 @@ title = "Howdy guys!"
 resources = "/Users/naegelejd/code/game/res/"
 
 fonts = {
-    menlo = "/System/Library/Fonts/Menlo.ttc"
+    deja = "DejaVuSans.ttf"
 }
 
 audio = {

@@ -3,7 +3,7 @@
 
 #include <SFML/Graphics.hpp>
 
-#include "actor.h"
+#include "Actor.h"
 
 class Player : public BAMF::Actor
 {

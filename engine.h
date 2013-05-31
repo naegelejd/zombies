@@ -3,11 +3,11 @@
 
 #include <SFML/Graphics.hpp>
 
-#include "logger.h"
-#include "configurator.h"
-#include "resourcer.h"
-#include "inputter.h"
-#include "actor.h"
+#include "Logger.h"
+#include "Configurator.h"
+#include "Resourcer.h"
+#include "Inputter.h"
+#include "Actor.h"
 
 namespace BAMF {
 
@@ -20,23 +20,16 @@ class Engine {
         void start(const std::string&);
         void run();
 
-        void config(const std::string&);
-
-        void load(void);
-
-        Configurator& getConfigurator(void);
-
-        Resourcer& getResourcer(void);
-
         Inputter& getInputter(void);
 
         void addActor(Actor* actor);
 
+        sf::Mutex mutex;
+        bool resources_loaded;
+
     private:
         sf::RenderWindow window;
         Logger logger;
-        Configurator configurator;
-        Resourcer resourcer;
         Inputter inputter;
 
         std::vector<Actor*> actors;

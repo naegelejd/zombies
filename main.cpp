@@ -5,17 +5,14 @@
 #include <SFML/Graphics.hpp>
 #include <SFML/System.hpp>
 
-extern "C" {
-#include "lua.h"
-#include "lauxlib.h"
-#include "lualib.h"
-}
-
-#include "engine.h"
-#include "configurator.h"
-#include "player.h"
-#include "zombie.h"
-#include "flock.h"
+#include "Configurator.h"
+#include "Resourcer.h"
+#include "Game.h"
+#include "LoadState.h"
+#include "PlayState.h"
+#include "Player.h"
+#include "Zombie.h"
+#include "Flock.h"
 
 
 static int test(lua_State *L)
@@ -31,33 +28,49 @@ int main(int argc, char *argv[])
         return EXIT_FAILURE;
     }
 
-    BAMF::Engine engine;
-
-    BAMF::Configurator& configurator = engine.getConfigurator();
+    BAMF::Configurator configurator;
     //configurator.registerFunction("test", test);
 
-    engine.config(argv[1]);
+    configurator.readConfig(argv[1]);
 
-    engine.start(512, 384, "My Game!");
+    BAMF::Resourcer resourcer;
+    std::string res;
+    try {
+        res = configurator.getString("resources");
+    } catch (const std::exception& err) {
+        std::cerr << "Failed to find resource dir" << std::endl;
+        exit(EXIT_FAILURE);
+    }
+    resourcer.setResourceDir(res);
 
-    sf::Thread thread(&BAMF::Engine::load, &engine);
-    //engine.load();
-    thread.launch();
-    thread.wait();
+    std::map<std::string, std::string> fonts;
+    try {
+        fonts = configurator.getTable("fonts");
+    } catch (const std::exception& err) {
+        std::cerr << "Failed to find fonts table" << std::endl;
+        exit(EXIT_FAILURE);
+    }
 
-    BAMF::Resourcer& resourcer = engine.getResourcer();
+    std::map<std::string, std::string> textures;
+    try {
+       textures = configurator.getTable("textures");
+    } catch (const std::exception& err) {
+        std::cerr << "Failed to find textures table" << std::endl;
+        exit(EXIT_FAILURE);
+    }
 
-    sf::Text text("Loading...", resourcer.getFont("menlo"));
-    text.setCharacterSize(24);
-    text.setColor(sf::Color::White);
-    //text.setStyle(sf::Text::Bold | sf::Text::Underlined);
+    resourcer.loadFonts(fonts);
+    resourcer.loadTextures(textures);
 
-    sf::Texture pt = resourcer.getTexture("player");
+
+    BAMF::Game game(512, 384, configurator.getString("title"));
+
+    BAMF::PlayState playstate;
+
     Player player;
     player.setTexture(resourcer.getTexture("player"));
     player.setTextureRect(sf::IntRect(0, 0, 32, 32));
-
-    engine.addActor(&player);
+    playstate.add(&player);
 
     Flock flock;
     for (int i = 0; i < 10; i++) {
@@ -69,9 +82,30 @@ int main(int argc, char *argv[])
 
     flock.setFollowee(&player);
 
-    engine.addActor(&flock);
+    playstate.add(&flock);
 
-    engine.run();
+    game.pushState(&playstate);
+
+    sf::Text load_text("Loading...", resourcer.getFont("deja"));
+    load_text.setCharacterSize(24);
+    load_text.setColor(sf::Color::White);
+    sf::RenderTexture load_texture;
+    if (!load_texture.create(500, 500)) {
+        std::cerr << "crap" << std::endl;
+        exit(EXIT_FAILURE);
+    }
+    load_texture.clear(sf::Color::Black);
+    load_texture.draw(load_text);
+    load_texture.display();
+
+    BAMF::Actor load_screen;
+    load_screen.setTexture(load_texture.getTexture());
+
+    BAMF::LoadState loadstate;
+    loadstate.add(&load_screen);
+    game.pushState(&loadstate);
+
+    game.run();
 
     return EXIT_SUCCESS;
 }

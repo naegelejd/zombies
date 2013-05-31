@@ -1,5 +1,6 @@
 #include <stdexcept>
-#include "configurator.h"
+
+#include "Configurator.h"
 
 namespace BAMF {
 
@@ -34,6 +35,12 @@ void Configurator::readConfig(const std::string& path)
     }
     strings["resources"] = std::string(resources);
 
+    lua_getglobal(L, "title");
+    const char *title = lua_tostring(L, -1);
+    if (!title) {
+        std::cerr << "Failed to read var title" << std::endl;
+    }
+    strings["title"] = std::string(title);
     lua_pop(L, 1);
 
     loadTable("fonts");

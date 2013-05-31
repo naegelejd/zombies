@@ -13,7 +13,9 @@ class Actor : public sf::Sprite {
         Actor() { }
         virtual ~Actor() { }
 
-        virtual void update(void) = 0;
+        virtual void update(void)
+        {
+        }
 
         virtual void render(sf::RenderWindow& win)
         {

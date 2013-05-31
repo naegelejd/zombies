@@ -51,6 +51,7 @@ class Resourcer {
 
         void setResourceDir(const std::string&);
 
+        void load(const std::string&, const std::map<std::string, std::string>&);
         void loadFonts(const std::map<std::string, std::string>&);
         void loadTextures(const std::map<std::string, std::string>&);
 

@@ -5,6 +5,7 @@
 namespace BAMF {
 
 Engine::Engine()
+    : resources_loaded(false)
 { }
 
 void Engine::start(unsigned int resX, unsigned int resY, const std::string& title)
@@ -58,55 +59,6 @@ void Engine::run()
 
         window.display();
     }
-}
-
-void Engine::config(const std::string& path)
-{
-    configurator.readConfig(path);
-}
-
-void Engine::load(void)
-{
-    std::string res;
-    try {
-        res = configurator.getString("resources");
-    } catch (const std::exception& err) {
-        std::cerr << "Failed to find resource dir" << std::endl;
-        exit(EXIT_FAILURE);
-    }
-    logger.log("Resource Dir: " + res);
-    resourcer.setResourceDir(res);
-
-    std::map<std::string, std::string> fonts;
-    try {
-        fonts = configurator.getTable("fonts");
-    } catch (const std::exception& err) {
-        std::cerr << "Failed to find fonts table" << std::endl;
-        exit(EXIT_FAILURE);
-    }
-
-    std::map<std::string, std::string> textures;
-    try {
-       textures = configurator.getTable("textures");
-    } catch (const std::exception& err) {
-        std::cerr << "Failed to find textures table" << std::endl;
-        exit(EXIT_FAILURE);
-    }
-
-    resourcer.loadFonts(fonts);
-    resourcer.loadTextures(textures);
-
-    logger.log("Loaded all resources");
-}
-
-Configurator& Engine::getConfigurator(void)
-{
-    return configurator;
-}
-
-Resourcer& Engine::getResourcer(void)
-{
-    return resourcer;
 }
 
 Inputter& Engine::getInputter(void)

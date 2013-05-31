@@ -1,7 +1,7 @@
 #include <cmath>
 #include <iostream>
 
-#include "zombie.h"
+#include "Zombie.h"
 
 Zombie::Zombie()
     : BAMF::Actor()

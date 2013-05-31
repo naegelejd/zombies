@@ -3,7 +3,7 @@
 
 #include <SFML/Graphics.hpp>
 
-#include "actor.h"
+#include "Actor.h"
 
 class Zombie : public BAMF::Actor
 {
