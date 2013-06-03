@@ -1,6 +1,6 @@
 cmake_minimum_required(VERSION 2.8)
 
-project(game)
+project(zombies)
 
 set(CMAKE_BUILD_TYPE Debug)
 
@@ -13,18 +13,13 @@ add_subdirectory(ext)
 
 include_directories(${SFML_INCLUDE_DIR} ${LUA_INCLUDE_DIR})
 
-add_executable(game
+add_executable(zombies
     main.cpp
     game.cpp
-    loadState.cpp
-    mainMenuState.cpp
-    playState.cpp
-    button.cpp
     configurator.cpp
     resourcer.cpp
-    inputter.cpp
     player.cpp
     zombie.cpp
     flock.cpp)
 
-target_link_libraries(game ${SFML_LIBRARIES} lua)
+target_link_libraries(zombies ${SFML_LIBRARIES} lua)

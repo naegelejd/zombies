@@ -8,11 +8,8 @@
 #include "configurator.h"
 #include "resourcer.h"
 #include "game.h"
-#include "loadstate.h"
-#include "playstate.h"
-#include "player.h"
-#include "zombie.h"
-#include "flock.h"
+#include "entity.h"
+#include "state.h"
 
 
 static int test(lua_State *L)
@@ -62,30 +59,36 @@ int main(int argc, char *argv[])
     resourcer.loadFonts(fonts);
     resourcer.loadTextures(textures);
 
+    sf::Sprite player_sprite;
+    player_sprite.setTexture(resourcer.getTexture("player"));
+    player_sprite.setTextureRect(sf::IntRect(0, 0, 32, 32));
+
 
     BAMF::Game game(512, 384, configurator.getString("title"));
 
-    BAMF::PlayState playstate;
+    BAMF::Entity player;
+    BAMF::PositionComponent p;
+    BAMF::VelocityComponent v;
+    BAMF::RenderableComponent r(player_sprite);
+    BAMF::InputComponent i;
+    player.addComponent(&p);
+    player.addComponent(&v);
+    player.addComponent(&r);
+    player.addComponent(&i);
 
-    Player player;
-    player.setTexture(resourcer.getTexture("player"));
-    player.setTextureRect(sf::IntRect(0, 0, 32, 32));
-    playstate.add(&player);
+    BAMF::InputSystem is;
+    BAMF::MovementSystem ms;
+    BAMF::RenderSystem rs(game.getWindow());
+    BAMF::State playstate(&game);
+    playstate.addSystem(&is);
+    playstate.addSystem(&ms);
+    playstate.addSystem(&rs);
 
-    Flock flock;
-    for (int i = 0; i < 10; i++) {
-        Zombie zombie;
-        zombie.setTexture(resourcer.getTexture("zombie"));
-        zombie.setTextureRect(sf::IntRect(0, 0, 32, 32));
-        flock.add(zombie);
-    }
-
-    flock.setFollowee(&player);
-
-    playstate.add(&flock);
+    playstate.addEntity(&player);
 
     game.pushState(&playstate);
 
+    /*
     sf::Text load_text("Loading...", resourcer.getFont("deja"));
     load_text.setCharacterSize(24);
     load_text.setColor(sf::Color::White);
@@ -98,12 +101,21 @@ int main(int argc, char *argv[])
     load_texture.draw(load_text);
     load_texture.display();
 
-    BAMF::Actor load_screen;
-    load_screen.setTexture(load_texture.getTexture());
+    sf::Sprite load_sprite(load_texture.getTexture());
 
-    BAMF::LoadState loadstate;
-    loadstate.add(&load_screen);
+    BAMF::Entity load_screen;
+    BAMF::PositionComponent lpc;
+    BAMF::RenderableComponent lrc(load_sprite);
+    load_screen.addComponent(&lpc);
+    load_screen.addComponent(&lrc);
+
+    BAMF::RenderSystem lrs(game.getWindow());
+    BAMF::State loadstate(&game);
+    loadstate.addSystem(&lrs);
+    loadstate.addEntity(&load_screen);
+
     game.pushState(&loadstate);
+    */
 
     game.run();
 

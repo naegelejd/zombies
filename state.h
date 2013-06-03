@@ -1,22 +1,49 @@
 #ifndef STATE_H
 #define STATE_H
 
-#include "actor.h"
+#include "entity.h"
+#include "system.h"
 
 namespace BAMF {
 
+class Game;
+
 class State {
     public:
-        State() { };
+        State(Game* g) : game(g) { };
         virtual ~State() { };
-        virtual void update(void) = 0;
-        virtual void render(sf::RenderWindow&) = 0;
-        virtual void add(Actor*) = 0;
+
+        virtual void update(void)
+        {
+            std::vector<System*>::iterator sys_iter;
+            for (sys_iter = systems.begin(); sys_iter != systems.end(); ++sys_iter) {
+                // try to add to every system
+                (*sys_iter)->update();
+            }
+        }
+
+        virtual void addEntity(Entity* entity)
+        {
+            std::vector<System*>::iterator sys_iter;
+            for (   sys_iter = systems.begin();
+                    sys_iter != systems.end();
+                    ++sys_iter) {
+                // try to add to every system
+                (*sys_iter)->addEntity(entity);
+            }
+        }
+
+        virtual void addSystem(System* system)
+        {
+            systems.push_back(system);
+        }
+
     private:
         State(const State&);
         State& operator=(const State&);
     protected:
-        std::vector<Actor*> actors;
+        Game* const game;
+        std::vector<System*> systems;
 };
 
 } // namespace BAMF

@@ -33,6 +33,42 @@ logical flow:
   - draw enemies
   - draw player
 
+## Hierarchy
+
+Game
+ State
+  Systems
+   Entities
+    Components
+
+## Systems
+
+- movement
+  - position
+  - velocity
+- rendering
+  - renderable
+  - position
+- animation
+  - renderable
+- collision
+  - position
+- sound
+  - sf sound
+
+## Components
+
+- position
+  - x
+  - y
+- velocity
+  - x
+  - y
+- renderable
+  - sf::Sprite
+- sound
+  - sf::Sound
+
 ## Resource Manager
 
 - map resource identifiers to file paths

@@ -19,8 +19,7 @@ Game::~Game()
 void Game::run(void)
 {
     if (states.empty()) {
-        std::cerr << "Can't run game without an initial state" << std::endl;
-        return;
+        throw std::runtime_error("Can't run game without any states");
     }
 
     while (window.isOpen()) {
@@ -39,9 +38,6 @@ void Game::run(void)
 
         State *state = states.top();
         state->update();
-        window.clear();
-        state->render(window);
-        window.display();
     }
 }
 
@@ -60,6 +56,11 @@ State& Game::popState(void)
     State& state = *states.top();
     states.pop();
     return state;
+}
+
+sf::RenderWindow& Game::getWindow(void)
+{
+    return window;
 }
 
 } // namespace BAMF

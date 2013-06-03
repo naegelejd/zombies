@@ -1,6 +1,7 @@
 #ifndef GAME_H
 #define GAME_H
 
+#include <stdexcept>
 #include <stack>
 
 #include "state.h"
@@ -16,6 +17,7 @@ class Game {
         State& currentState(void);
         void pushState(State*);
         State& popState(void);
+        sf::RenderWindow& getWindow(void);
     private:
         sf::RenderWindow window;
         std::stack<State*> states;
