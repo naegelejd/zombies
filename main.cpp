@@ -56,15 +56,28 @@ int main(int argc, char *argv[])
         exit(EXIT_FAILURE);
     }
 
+    std::map<std::string, std::string> sounds;
+    try {
+       sounds = configurator.getTable("sounds");
+    } catch (const std::exception& err) {
+        std::cerr << "Failed to find sounds table" << std::endl;
+        exit(EXIT_FAILURE);
+    }
+
     resourcer.loadFonts(fonts);
     resourcer.loadTextures(textures);
+    resourcer.loadSounds(sounds);
 
     sf::Sprite player_sprite;
     player_sprite.setTexture(resourcer.getTexture("player"));
-    player_sprite.setTextureRect(sf::IntRect(0, 0, 32, 32));
+    sf::IntRect rect(0, 0, 32, 32);
+    player_sprite.setTextureRect(rect);
+    sf::Vector2f orig(rect.left + (rect.width / 2),
+            rect.top + (rect.height / 2));
+    player_sprite.setOrigin(orig);
 
-
-    BAMF::Game game(512, 384, configurator.getString("title"));
+    BAMF::Game &game = BAMF::Game::getInstance();
+    game.init(512, 384, configurator.getString("title"));
 
     BAMF::Entity player;
     BAMF::PositionComponent p;
@@ -78,18 +91,19 @@ int main(int argc, char *argv[])
 
     BAMF::InputSystem is;
     BAMF::MovementSystem ms;
+    BAMF::RotationSystem rots;
     BAMF::RenderSystem rs(game.getWindow());
-    BAMF::State playstate(&game);
+    BAMF::State playstate;
     playstate.addSystem(&is);
     playstate.addSystem(&ms);
+    playstate.addSystem(&rots);
     playstate.addSystem(&rs);
 
     playstate.addEntity(&player);
 
     game.pushState(&playstate);
 
-    /*
-    sf::Text load_text("Loading...", resourcer.getFont("deja"));
+    sf::Text load_text("Play!", resourcer.getFont("deja"));
     load_text.setCharacterSize(24);
     load_text.setColor(sf::Color::White);
     sf::RenderTexture load_texture;
@@ -110,12 +124,11 @@ int main(int argc, char *argv[])
     load_screen.addComponent(&lrc);
 
     BAMF::RenderSystem lrs(game.getWindow());
-    BAMF::State loadstate(&game);
+    BAMF::State loadstate;
     loadstate.addSystem(&lrs);
     loadstate.addEntity(&load_screen);
 
     game.pushState(&loadstate);
-    */
 
     game.run();
 

@@ -1,1 +1,1 @@
-add_subdirectory(lua)
+add_subdirectory(lua-5.2.2)

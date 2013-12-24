@@ -45,11 +45,17 @@ void Configurator::readConfig(const std::string& path)
 
     loadTable("fonts");
     loadTable("textures");
+    loadTable("sounds");
 }
 
 void Configurator::loadTable(const char *tbl)
 {
     lua_getglobal(L, tbl);
+    if (lua_isnil(L, -1)) {
+        std::cerr << "Invalid table name: " << tbl << std::endl;
+        return;
+    }
+
     lua_pushnil(L);
 
     //std::cout << lua_typename(L, lua_type(L, -1)) << std::endl;

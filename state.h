@@ -6,11 +6,9 @@
 
 namespace BAMF {
 
-class Game;
-
 class State {
     public:
-        State(Game* g) : game(g) { };
+        State() { };
         virtual ~State() { };
 
         virtual void update(void)
@@ -42,7 +40,6 @@ class State {
         State(const State&);
         State& operator=(const State&);
     protected:
-        Game* const game;
         std::vector<System*> systems;
 };
 

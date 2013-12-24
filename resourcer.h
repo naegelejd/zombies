@@ -5,6 +5,7 @@
 #include <stdexcept>
 
 #include <SFML/Graphics.hpp>
+#include <SFML/Audio.hpp>
 
 namespace BAMF {
 
@@ -54,9 +55,11 @@ class Resourcer {
         void load(const std::string&, const std::map<std::string, std::string>&);
         void loadFonts(const std::map<std::string, std::string>&);
         void loadTextures(const std::map<std::string, std::string>&);
+        void loadSounds(const std::map<std::string, std::string>&);
 
         const sf::Texture& getTexture(const std::string&);
         const sf::Font& getFont(const std::string&);
+        const sf::SoundBuffer& getSound(const std::string&);
 
     private:
         Resourcer(const Resourcer&);
@@ -65,6 +68,7 @@ class Resourcer {
         std::string resource_directory;
         ResLoader<sf::Texture> textureLoader;
         ResLoader<sf::Font> fontLoader;
+        ResLoader<sf::SoundBuffer> soundLoader;
 };
 
 } // namespace BAMF

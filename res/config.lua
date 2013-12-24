@@ -7,8 +7,9 @@ fonts = {
     deja = "DejaVuSans.ttf"
 }
 
-audio = {
-
+sounds = {
+    gunshot = "gunshot1.wav",
+    triggerclick = "triggerclick1.wav"
 }
 
 textures = {

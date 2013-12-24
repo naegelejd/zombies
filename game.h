@@ -10,15 +10,25 @@ namespace BAMF {
 
 class Game {
     public:
-        Game(unsigned int, unsigned int, const std::string&);
-        Game(const std::string&);
         ~Game();
+        static Game& getInstance()
+        {
+            static Game instance;
+            return instance;
+        }
+
+        void init(unsigned int, unsigned int, const std::string&);
+        void init(const std::string&);
         void run(void);
         State& currentState(void);
         void pushState(State*);
         State& popState(void);
         sf::RenderWindow& getWindow(void);
     private:
+        Game();
+        Game(const Game&);
+        Game& operator=(const Game&);
+
         sf::RenderWindow window;
         std::stack<State*> states;
 };

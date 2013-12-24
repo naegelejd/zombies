@@ -2,18 +2,25 @@
 
 namespace BAMF {
 
-Game::Game(unsigned int x, unsigned int y, const std::string& title)
-    : window(sf::VideoMode (x, y, sf::VideoMode::getDesktopMode().bitsPerPixel), title)
-{
-}
-
-Game::Game(const std::string& title)
-    : window(sf::VideoMode::getDesktopMode(), title)
+Game::Game()
 {
 }
 
 Game::~Game()
 {
+}
+
+void Game::init(unsigned int x, unsigned int y, const std::string& title)
+{
+    window.create(
+            sf::VideoMode(x, y,
+                sf::VideoMode::getDesktopMode().bitsPerPixel),
+            title);
+}
+
+void Game::init(const std::string& title)
+{
+    window.create(sf::VideoMode::getDesktopMode(), title);
 }
 
 void Game::run(void)

@@ -1,3 +1,4 @@
-*
+lua*/*
+!lua*/CMakeLists.txt
 !.gitignore
 !CMakeLists.txt

@@ -4,6 +4,7 @@
 #include <vector>
 
 #include <SFML/Graphics.hpp>
+#include <SFML/Audio.hpp>
 
 namespace BAMF {
 
@@ -14,6 +15,7 @@ typedef enum {
     RenderableComponentID,
     ReadableComponentID,
     InputComponentID,
+    AudibleComponentID,
     COMPONENT_COUNT
 } ComponentID;
 
@@ -78,6 +80,16 @@ class InputComponent : public Component {
         ~InputComponent() { }
 
 };
+
+class AudibleComponent : public Component {
+    public:
+        AudibleComponent()
+            : Component(AudibleComponentID) { }
+        ~AudibleComponent() { }
+
+        sf::Sound sound;
+};
+
 
 class Entity {
     public:

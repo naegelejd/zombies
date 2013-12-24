@@ -18,8 +18,8 @@ class System {
 
         virtual void addEntity(Entity *e)
         {
-            std::set<ComponentID>::iterator id;
-            for (id = interested.begin(); id != interested.end(); ++id) {
+            //std::set<ComponentID>::iterator id;
+            for (auto id = interested.begin(); id != interested.end(); ++id) {
                 if (!e->hasComponent(*id)) {
                     return;
                 }
@@ -43,19 +43,20 @@ class MovementSystem : public System {
 
         ~MovementSystem() { }
 
-        virtual void update(void)
+        virtual void update(void);
+};
+
+class RotationSystem : public System {
+    public:
+        RotationSystem()
         {
-            std::vector<Entity*>::iterator e_it;
-            for (e_it = entities.begin(); e_it != entities.end(); ++e_it) {
-                Entity* e = *e_it;
-                PositionComponent* p = static_cast<PositionComponent*>(
-                        e->getComponent(PositionComponentID));
-                VelocityComponent* v = static_cast<VelocityComponent*>(
-                        e->getComponent(VelocityComponentID));
-                p->x += v->x;
-                p->y += v->y;
-            }
+            interested.insert(VelocityComponentID);
+            interested.insert(RenderableComponentID);
         }
+
+        ~RotationSystem() { }
+
+        virtual void update(void);
 };
 
 class RenderSystem : public System {
@@ -69,22 +70,7 @@ class RenderSystem : public System {
 
         ~RenderSystem() { }
 
-        virtual void update(void)
-        {
-            window.clear();
-            std::vector<Entity*>::iterator e_it;
-            for (e_it = entities.begin(); e_it != entities.end(); ++e_it) {
-                Entity* e = *e_it;
-                PositionComponent* p = static_cast<PositionComponent*>(
-                        e->getComponent(PositionComponentID));
-                RenderableComponent* r = static_cast<RenderableComponent*>(
-                        e->getComponent(RenderableComponentID));
-                r->sprite.setPosition(p->x, p->y);
-                //std::cout << p->x << ", " << p->y << std::endl;
-                window.draw(r->sprite);
-            }
-            window.display();
-        }
+        virtual void update(void);
 
     private:
         sf::RenderWindow& window;
@@ -100,39 +86,7 @@ class InputSystem : public System {
 
         ~InputSystem() { }
 
-        virtual void update(void)
-        {
-            std::vector<Entity*>::iterator e_it;
-            for (e_it = entities.begin(); e_it != entities.end(); ++e_it) {
-                Entity* e = *e_it;
-                VelocityComponent* v = static_cast<VelocityComponent*>(
-                        e->getComponent(VelocityComponentID));
-
-                int x = 0, y = 0;
-                if (sf::Keyboard::isKeyPressed(sf::Keyboard::Right))
-                    x = 1;
-                else if (sf::Keyboard::isKeyPressed(sf::Keyboard::Left))
-                    x = -1;
-                if (sf::Keyboard::isKeyPressed(sf::Keyboard::Down))
-                    y = 1;
-                else if (sf::Keyboard::isKeyPressed(sf::Keyboard::Up))
-                    y = -1;
-
-                if (x || y) {
-                    if (x && y) {
-                        float diag = sqrt(2.0) / 2.0;
-                        v->x = x * diag;
-                        v->y = y * diag;
-                    } else {
-                        v->x = x;
-                        v->y = y;
-                    }
-
-                    //float angle = atan2(velocity.y, velocity.x) * 180 / M_PI;
-                    //this->setRotation(angle);
-                }
-            }
-        }
+        virtual void update(void);
 };
 
 class ButtonSystem : public System {
@@ -145,10 +99,7 @@ class ButtonSystem : public System {
 
         ~ButtonSystem() { }
 
-        virtual void update(void)
-        {
-            
-        }
+        virtual void update(void);
 };
 
 } // namespace BAMF

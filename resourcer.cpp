@@ -26,6 +26,11 @@ void Resourcer::loadFonts(const std::map<std::string, std::string>& paths)
     fontLoader.loadFromMap(resource_directory, paths);
 }
 
+void Resourcer::loadSounds(const std::map<std::string, std::string>& paths)
+{
+    soundLoader.loadFromMap(resource_directory, paths);
+}
+
 const sf::Texture& Resourcer::getTexture(const std::string& name)
 {
     try {
@@ -42,6 +47,16 @@ const sf::Font& Resourcer::getFont(const std::string& name)
         return fontLoader.getResource(name);
     } catch (const std::exception& err) {
         std::cerr << "Failed to get font " << name << std::endl;
+        exit(EXIT_FAILURE);
+    }
+}
+
+const sf::SoundBuffer& Resourcer::getSound(const std::string& name)
+{
+    try {
+        return soundLoader.getResource(name);
+    } catch (const std::exception& err) {
+        std::cerr << "Failed to get sound " << name << std::endl;
         exit(EXIT_FAILURE);
     }
 }
