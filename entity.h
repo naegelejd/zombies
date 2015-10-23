@@ -104,7 +104,7 @@ class Entity {
         Entity() : components(COMPONENT_COUNT) { }
         ~Entity() { }
 
-        void addComponent(Component* c)
+        void addComponent(const std::shared_ptr<Component>& c)
         {
             std::cout << "adding component " << c << "\n";
             if (c) {
@@ -120,13 +120,13 @@ class Entity {
             return true;
         }
 
-        Component* getComponent(ComponentID id)
+        std::shared_ptr<Component> getComponent(ComponentID id)
         {
             return components[id];
         }
 
     private:
-        std::vector<Component*> components;
+        std::vector<std::shared_ptr<Component> > components;
 };
 
 } // namespace BAMF

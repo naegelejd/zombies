@@ -101,14 +101,14 @@ int main(int argc, char *argv[])
     playstate.addSystem(&fs);
 
     BAMF::Entity player;
-    BAMF::PositionComponent p;
-    BAMF::VelocityComponent v;
-    BAMF::RenderableComponent r(player_sprite);
-    BAMF::InputComponent i;
-    player.addComponent(&p);
-    player.addComponent(&v);
-    player.addComponent(&r);
-    player.addComponent(&i);
+    auto p = std::make_shared<BAMF::PositionComponent>();
+    auto v = std::make_shared<BAMF::VelocityComponent>();
+    auto r = std::make_shared<BAMF::RenderableComponent>(player_sprite);
+    auto i = std::make_shared<BAMF::InputComponent>();
+    player.addComponent(p);
+    player.addComponent(v);
+    player.addComponent(r);
+    player.addComponent(i);
     playstate.addEntity(&player);
 
     std::vector<BAMF::Entity> zombies(5);
@@ -117,25 +117,28 @@ int main(int argc, char *argv[])
     std::uniform_int_distribution<> random_x(0, width);
     std::uniform_int_distribution<> random_y(0, height);
     for (auto& z: zombies) {
-        BAMF::PositionComponent p(random_x(gen), random_y(gen));
-        BAMF::VelocityComponent v;
-        BAMF::FlockMemberComponent f;
-        BAMF::RenderableComponent r(zombie_sprite);
-        z.addComponent(&p);
-        z.addComponent(&v);
-        z.addComponent(&f);
-        z.addComponent(&r);
+        auto p = std::make_shared<BAMF::PositionComponent>(random_x(gen), random_y(gen));
+        auto v = std::make_shared<BAMF::VelocityComponent>();
+        auto f = std::make_shared<BAMF::FlockMemberComponent>();
+        auto r = std::make_shared<BAMF::RenderableComponent>(zombie_sprite);
+        z.addComponent(p);
+        z.addComponent(v);
+        z.addComponent(f);
+        z.addComponent(r);
         std::cout << &z << std::endl;
         playstate.addEntity(&z);
     }
 
     game.pushState(&playstate);
 
-    sf::Text load_text("Play!", resourcer.getFont("deja"));
+    sf::Text load_text("Press ENTER to Play!", resourcer.getFont("deja"));
     load_text.setCharacterSize(24);
     load_text.setColor(sf::Color::White);
+    // center the text
+    load_text.setOrigin(load_text.getLocalBounds().width / 2, load_text.getLocalBounds().height / 2);
+    load_text.setPosition(width/2, height/2);
     sf::RenderTexture load_texture;
-    if (!load_texture.create(500, 500)) {
+    if (!load_texture.create(width, height)) {
         std::cerr << "crap" << std::endl;
         exit(EXIT_FAILURE);
     }
@@ -146,10 +149,10 @@ int main(int argc, char *argv[])
     sf::Sprite load_sprite(load_texture.getTexture());
 
     BAMF::Entity load_screen;
-    BAMF::PositionComponent lpc;
-    BAMF::RenderableComponent lrc(load_sprite);
-    load_screen.addComponent(&lpc);
-    load_screen.addComponent(&lrc);
+    auto lpc = std::make_shared<BAMF::PositionComponent>();
+    auto lrc = std::make_shared<BAMF::RenderableComponent>(load_sprite);
+    load_screen.addComponent(lpc);
+    load_screen.addComponent(lrc);
 
     BAMF::RenderSystem lrs(game.getWindow());
     BAMF::ButtonSystem bs;

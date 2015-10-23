@@ -10,9 +10,9 @@ void MovementSystem::update(void)
 {
     for (auto& e : entities) {
         PositionComponent* p = static_cast<PositionComponent*>(
-                e->getComponent(PositionComponentID));
+                e->getComponent(PositionComponentID).get());
         VelocityComponent* v = static_cast<VelocityComponent*>(
-                e->getComponent(VelocityComponentID));
+                e->getComponent(VelocityComponentID).get());
         p->x += v->x;
         p->y += v->y;
     }
@@ -22,9 +22,9 @@ void RotationSystem::update(void)
 {
     for (auto&e : entities) {
         VelocityComponent* v = static_cast<VelocityComponent*>(
-                e->getComponent(VelocityComponentID));
+                e->getComponent(VelocityComponentID).get());
         RenderableComponent* r = static_cast<RenderableComponent*>(
-                e->getComponent(RenderableComponentID));
+                e->getComponent(RenderableComponentID).get());
 
         if (!(v->y == 0 && v->x == 0)) {
             float angle = atan2(v->y, v->x) * 180 / M_PI;
@@ -38,9 +38,9 @@ void RenderSystem::update(void)
     window.clear();
     for (auto&e : entities) {
         PositionComponent* p = static_cast<PositionComponent*>(
-                e->getComponent(PositionComponentID));
+                e->getComponent(PositionComponentID).get());
         RenderableComponent* r = static_cast<RenderableComponent*>(
-                e->getComponent(RenderableComponentID));
+                e->getComponent(RenderableComponentID).get());
         r->sprite.setPosition(p->x, p->y);
         //std::cout << p->x << ", " << p->y << std::endl;
         window.draw(r->sprite);
@@ -52,7 +52,7 @@ void InputSystem::update(void)
 {
     for (auto& e : entities) {
         VelocityComponent* v = static_cast<VelocityComponent*>(
-                e->getComponent(VelocityComponentID));
+                e->getComponent(VelocityComponentID).get());
 
         int x = 0, y = 0;
         if (sf::Keyboard::isKeyPressed(sf::Keyboard::Right))
@@ -97,9 +97,9 @@ void FlockSystem::update(void)
 
     for (auto& e: entities) {
         FlockMemberComponent* f = static_cast<FlockMemberComponent*>(
-                e->getComponent(FlockMemberComponentID));
+                e->getComponent(FlockMemberComponentID).get());
         VelocityComponent* v = static_cast<VelocityComponent*>(
-                e->getComponent(VelocityComponentID));
+                e->getComponent(VelocityComponentID).get());
 
         int x = dis(gen);
         int y = dis(gen);

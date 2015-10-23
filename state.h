@@ -37,8 +37,8 @@ class State {
         }
 
     private:
-        State(const State&);
-        State& operator=(const State&);
+        State(const State&) = delete;
+        State& operator=(const State&) = delete;
     protected:
         std::vector<System*> systems;
 };
