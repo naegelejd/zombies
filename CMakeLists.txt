@@ -20,10 +20,9 @@ add_executable(zombies
     game.cpp
     configurator.cpp
     resourcer.cpp
-    system.cpp
+    system.cpp)
     #player.cpp
     #zombie.cpp
     #flock.cpp)
-)
 
 target_link_libraries(zombies ${SFML_LIBRARIES} lua)

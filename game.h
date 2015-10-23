@@ -10,7 +10,6 @@ namespace BAMF {
 
 class Game {
     public:
-        ~Game();
         static Game& getInstance()
         {
             static Game instance;
@@ -25,9 +24,10 @@ class Game {
         State& popState(void);
         sf::RenderWindow& getWindow(void);
     private:
-        Game();
-        Game(const Game&);
-        Game& operator=(const Game&);
+        Game() {};
+        ~Game() {};
+        Game(const Game&) = delete;
+        Game& operator=(const Game&) = delete;
 
         sf::RenderWindow window;
         std::stack<State*> states;

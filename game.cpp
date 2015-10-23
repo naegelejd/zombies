@@ -2,20 +2,13 @@
 
 namespace BAMF {
 
-Game::Game()
-{
-}
-
-Game::~Game()
-{
-}
-
 void Game::init(unsigned int x, unsigned int y, const std::string& title)
 {
     window.create(
             sf::VideoMode(x, y,
                 sf::VideoMode::getDesktopMode().bitsPerPixel),
             title);
+    window.setFramerateLimit(60);
 }
 
 void Game::init(const std::string& title)

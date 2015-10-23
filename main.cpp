@@ -1,16 +1,17 @@
-#include <string>
-#include <iostream>
-#include <vector>
-
-#include <SFML/Graphics.hpp>
-#include <SFML/System.hpp>
-
 #include "configurator.h"
 #include "resourcer.h"
 #include "game.h"
 #include "entity.h"
 #include "state.h"
 
+#include <SFML/Graphics.hpp>
+#include <SFML/System.hpp>
+
+#include <string>
+#include <iostream>
+#include <vector>
+
+#include <random>
 
 static int test(lua_State *L)
 {
@@ -68,16 +69,36 @@ int main(int argc, char *argv[])
     resourcer.loadTextures(textures);
     resourcer.loadSounds(sounds);
 
-    sf::Sprite player_sprite;
-    player_sprite.setTexture(resourcer.getTexture("player"));
     sf::IntRect rect(0, 0, 32, 32);
-    player_sprite.setTextureRect(rect);
     sf::Vector2f orig(rect.left + (rect.width / 2),
             rect.top + (rect.height / 2));
+
+    sf::Sprite player_sprite;
+    player_sprite.setTexture(resourcer.getTexture("player"));
+    player_sprite.setTextureRect(rect);
     player_sprite.setOrigin(orig);
 
-    BAMF::Game &game = BAMF::Game::getInstance();
-    game.init(512, 384, configurator.getString("title"));
+    sf::Sprite zombie_sprite;
+    zombie_sprite.setTexture(resourcer.getTexture("zombie"));
+    zombie_sprite.setTextureRect(rect);
+    zombie_sprite.setOrigin(orig);
+
+
+    BAMF::Game& game = BAMF::Game::getInstance();
+    unsigned int width = 512, height = 384;
+    game.init(width, height, configurator.getString("title"));
+
+    BAMF::InputSystem is;
+    BAMF::MovementSystem ms;
+    BAMF::RotationSystem rots;
+    BAMF::RenderSystem rs(game.getWindow());
+    BAMF::FlockSystem fs;
+    BAMF::State playstate;
+    playstate.addSystem(&is);
+    playstate.addSystem(&ms);
+    playstate.addSystem(&rots);
+    playstate.addSystem(&rs);
+    playstate.addSystem(&fs);
 
     BAMF::Entity player;
     BAMF::PositionComponent p;
@@ -88,18 +109,25 @@ int main(int argc, char *argv[])
     player.addComponent(&v);
     player.addComponent(&r);
     player.addComponent(&i);
-
-    BAMF::InputSystem is;
-    BAMF::MovementSystem ms;
-    BAMF::RotationSystem rots;
-    BAMF::RenderSystem rs(game.getWindow());
-    BAMF::State playstate;
-    playstate.addSystem(&is);
-    playstate.addSystem(&ms);
-    playstate.addSystem(&rots);
-    playstate.addSystem(&rs);
-
     playstate.addEntity(&player);
+
+    std::vector<BAMF::Entity> zombies(5);
+    std::random_device rd;
+    std::mt19937 gen(rd());
+    std::uniform_int_distribution<> random_x(0, width);
+    std::uniform_int_distribution<> random_y(0, height);
+    for (auto& z: zombies) {
+        BAMF::PositionComponent p(random_x(gen), random_y(gen));
+        BAMF::VelocityComponent v;
+        BAMF::FlockMemberComponent f;
+        BAMF::RenderableComponent r(zombie_sprite);
+        z.addComponent(&p);
+        z.addComponent(&v);
+        z.addComponent(&f);
+        z.addComponent(&r);
+        std::cout << &z << std::endl;
+        playstate.addEntity(&z);
+    }
 
     game.pushState(&playstate);
 
@@ -124,8 +152,10 @@ int main(int argc, char *argv[])
     load_screen.addComponent(&lrc);
 
     BAMF::RenderSystem lrs(game.getWindow());
+    BAMF::ButtonSystem bs;
     BAMF::State loadstate;
     loadstate.addSystem(&lrs);
+    loadstate.addSystem(&bs);
     loadstate.addEntity(&load_screen);
 
     game.pushState(&loadstate);

@@ -1,13 +1,14 @@
 #include "system.h"
 #include "game.h"
 
+#include <random>
+
+
 namespace BAMF {
 
 void MovementSystem::update(void)
 {
-    std::vector<Entity*>::iterator e_it;
-    for (e_it = entities.begin(); e_it != entities.end(); ++e_it) {
-        Entity* e = *e_it;
+    for (auto& e : entities) {
         PositionComponent* p = static_cast<PositionComponent*>(
                 e->getComponent(PositionComponentID));
         VelocityComponent* v = static_cast<VelocityComponent*>(
@@ -19,25 +20,23 @@ void MovementSystem::update(void)
 
 void RotationSystem::update(void)
 {
-    std::vector<Entity*>::iterator e_it;
-    for (e_it = entities.begin(); e_it != entities.end(); ++e_it) {
-        Entity* e = *e_it;
+    for (auto&e : entities) {
         VelocityComponent* v = static_cast<VelocityComponent*>(
                 e->getComponent(VelocityComponentID));
         RenderableComponent* r = static_cast<RenderableComponent*>(
                 e->getComponent(RenderableComponentID));
 
-        float angle = atan2(v->y, v->x) * 180 / M_PI;
-        r->sprite.setRotation(angle);
+        if (!(v->y == 0 && v->x == 0)) {
+            float angle = atan2(v->y, v->x) * 180 / M_PI;
+            r->sprite.setRotation(angle);
+        }
     }
 }
 
 void RenderSystem::update(void)
 {
     window.clear();
-    std::vector<Entity*>::iterator e_it;
-    for (e_it = entities.begin(); e_it != entities.end(); ++e_it) {
-        Entity* e = *e_it;
+    for (auto&e : entities) {
         PositionComponent* p = static_cast<PositionComponent*>(
                 e->getComponent(PositionComponentID));
         RenderableComponent* r = static_cast<RenderableComponent*>(
@@ -51,9 +50,7 @@ void RenderSystem::update(void)
 
 void InputSystem::update(void)
 {
-    std::vector<Entity*>::iterator e_it;
-    for (e_it = entities.begin(); e_it != entities.end(); ++e_it) {
-        Entity* e = *e_it;
+    for (auto& e : entities) {
         VelocityComponent* v = static_cast<VelocityComponent*>(
                 e->getComponent(VelocityComponentID));
 
@@ -62,20 +59,23 @@ void InputSystem::update(void)
             x = 1;
         else if (sf::Keyboard::isKeyPressed(sf::Keyboard::Left))
             x = -1;
+        else
+            x = 0;
+
         if (sf::Keyboard::isKeyPressed(sf::Keyboard::Down))
             y = 1;
         else if (sf::Keyboard::isKeyPressed(sf::Keyboard::Up))
             y = -1;
+        else
+            y = 0;
 
-        if (x || y) {
-            if (x && y) {
-                float diag = sqrt(2.0) / 2.0;
-                v->x = x * diag;
-                v->y = y * diag;
-            } else {
-                v->x = x;
-                v->y = y;
-            }
+        if (x && y) {
+            float diag = sqrt(2.0) / 2.0;
+            v->x = x * diag;
+            v->y = y * diag;
+        } else {
+            v->x = x;
+            v->y = y;
         }
     }
 }
@@ -85,6 +85,33 @@ void ButtonSystem::update(void)
     if (sf::Keyboard::isKeyPressed(sf::Keyboard::Return)) {
         Game& game = Game::getInstance();
         game.popState();
+    }
+}
+
+
+void FlockSystem::update(void)
+{
+    std::random_device rd;
+    std::mt19937 gen(rd());
+    std::uniform_int_distribution<> dis(-2, 2);
+
+    for (auto& e: entities) {
+        FlockMemberComponent* f = static_cast<FlockMemberComponent*>(
+                e->getComponent(FlockMemberComponentID));
+        VelocityComponent* v = static_cast<VelocityComponent*>(
+                e->getComponent(VelocityComponentID));
+
+        int x = dis(gen);
+        int y = dis(gen);
+
+        if (x && y) {
+            float diag = sqrt(2.0) / 2.0;
+            v->x = x * diag;
+            v->y = y * diag;
+        } else {
+            v->x = x;
+            v->y = y;
+        }
     }
 }
 

@@ -1,10 +1,11 @@
 #ifndef ENTITY_H
 #define ENTITY_H
 
-#include <vector>
-
 #include <SFML/Graphics.hpp>
 #include <SFML/Audio.hpp>
+
+#include <vector>
+#include <iostream>
 
 namespace BAMF {
 
@@ -16,6 +17,7 @@ typedef enum {
     ReadableComponentID,
     InputComponentID,
     AudibleComponentID,
+    FlockMemberComponentID,
     COMPONENT_COUNT
 } ComponentID;
 
@@ -30,9 +32,10 @@ class Component {
 
 class PositionComponent : public Component {
     public:
-        PositionComponent()
+        PositionComponent(float x=0, float y=0)
             : Component(PositionComponentID)
-            , x(0), y(0) { }
+            , x(x), y(y) { }
+
         ~PositionComponent() { }
 
         float x;
@@ -41,9 +44,9 @@ class PositionComponent : public Component {
 
 class VelocityComponent : public Component {
     public:
-        VelocityComponent()
+        VelocityComponent(float x=0, float y=0)
             : Component(VelocityComponentID)
-            , x(0), y(0) { }
+            , x(x), y(y) {}
         ~VelocityComponent() { }
 
         float x;
@@ -70,7 +73,6 @@ class ReadableComponent : public Component {
         ~ReadableComponent() { }
 
         sf::Text text;
-
 };
 
 class InputComponent : public Component {
@@ -90,14 +92,21 @@ class AudibleComponent : public Component {
         sf::Sound sound;
 };
 
+class FlockMemberComponent: public Component {
+public:
+    FlockMemberComponent()
+      : Component(FlockMemberComponentID) {}
+};
+
 
 class Entity {
     public:
-        Entity() { }
+        Entity() : components(COMPONENT_COUNT) { }
         ~Entity() { }
 
-        void addComponent(Component *c)
+        void addComponent(Component* c)
         {
+            std::cout << "adding component " << c << "\n";
             if (c) {
                 components[c->getID()] = c;
             }
@@ -117,7 +126,7 @@ class Entity {
         }
 
     private:
-        Component* components[COMPONENT_COUNT];
+        std::vector<Component*> components;
 };
 
 } // namespace BAMF

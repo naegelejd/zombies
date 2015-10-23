@@ -18,13 +18,12 @@ class System {
 
         virtual void addEntity(Entity *e)
         {
-            //std::set<ComponentID>::iterator id;
-            for (auto id = interested.begin(); id != interested.end(); ++id) {
-                if (!e->hasComponent(*id)) {
+            for (auto& id : interested) {
+                if (!e->hasComponent(id)) {
                     return;
                 }
             }
-            std::cout << "adding entity to system" << std::endl;
+            // LOG: std::cout << "adding entity to system" << std::endl;
             entities.push_back(e);
         }
 
@@ -100,6 +99,19 @@ class ButtonSystem : public System {
         ~ButtonSystem() { }
 
         virtual void update(void);
+};
+
+class FlockSystem : public System {
+public:
+    FlockSystem()
+    {
+        interested.insert(VelocityComponentID);
+        interested.insert(FlockMemberComponentID);
+    }
+
+    ~FlockSystem() {}
+
+    virtual void update(void);
 };
 
 } // namespace BAMF

@@ -1,7 +1,7 @@
 -- require(os)
 
 title = "Howdy guys!"
-resources = "/Users/naegelejd/code/game/res/"
+resources = "/Users/naegelejd/src/github.com/naegelejd/zombies/res/"
 
 fonts = {
     deja = "DejaVuSans.ttf"
