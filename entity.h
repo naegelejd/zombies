@@ -4,129 +4,116 @@
 #include <SFML/Graphics.hpp>
 #include <SFML/Audio.hpp>
 
-#include <vector>
+#include <unordered_map>
 #include <iostream>
 
 namespace BAMF {
 
-typedef enum {
-    EmptyComponentID,
-    PositionComponentID,
-    VelocityComponentID,
-    RenderableComponentID,
-    ReadableComponentID,
-    InputComponentID,
-    AudibleComponentID,
-    FlockMemberComponentID,
-    COMPONENT_COUNT
-} ComponentID;
+enum class ComponentID {
+    Empty,
+    Position,
+    Velocity,
+    Renderable,
+    Readable,
+    Input,
+    Audible,
+    FlockMember
+};
+
+/* utility: see http://stackoverflow.com/a/24847480 */
+struct EnumClassHash
+{
+    template <typename T>
+    std::size_t operator()(T t) const
+    {
+        return static_cast<std::size_t>(t);
+    }
+};
 
 class Component {
-    public:
-       Component(ComponentID id) : id(id) { }
-       virtual ~Component() { }
-       ComponentID getID(void) { return id; }
-    private:
-        ComponentID id;
+public:
+    Component() { }
+    virtual ~Component() { }
+    template <class C> static ComponentID getID(void);
 };
 
 class PositionComponent : public Component {
-    public:
-        PositionComponent(float x=0, float y=0)
-            : Component(PositionComponentID)
-            , x(x), y(y) { }
+public:
+    PositionComponent(float x=0, float y=0)
+      : x(x), y(y) { }
 
-        ~PositionComponent() { }
-
-        float x;
-        float y;
+    float x, y;
 };
 
 class VelocityComponent : public Component {
-    public:
-        VelocityComponent(float x=0, float y=0)
-            : Component(VelocityComponentID)
-            , x(x), y(y) {}
-        ~VelocityComponent() { }
+public:
+    VelocityComponent(float dx=0, float dy=0)
+      : dx(dx), dy(dy) {}
 
-        float x;
-        float y;
+    float dx, dy;
 };
 
 class RenderableComponent : public Component {
-    public:
-        RenderableComponent(sf::Sprite& sp)
-            : Component(RenderableComponentID)
-            , sprite(sp) { }
+public:
+    RenderableComponent(sf::Sprite& sp)
+      : sprite(sp) { }
 
-        ~RenderableComponent() { }
-
-        sf::Sprite sprite;
+    sf::Sprite sprite;
 };
 
 class ReadableComponent : public Component {
-    public:
-        ReadableComponent(sf::Text& tx)
-            : Component(ReadableComponentID)
-            , text(tx) { }
+public:
+    ReadableComponent(sf::Text& tx)
+      : text(tx) { }
 
-        ~ReadableComponent() { }
-
-        sf::Text text;
+    sf::Text text;
 };
 
 class InputComponent : public Component {
-    public:
-        InputComponent()
-            : Component(InputComponentID) { }
-        ~InputComponent() { }
-
+public:
+    InputComponent() {}
 };
 
 class AudibleComponent : public Component {
-    public:
-        AudibleComponent()
-            : Component(AudibleComponentID) { }
-        ~AudibleComponent() { }
+public:
+    AudibleComponent() {}
 
-        sf::Sound sound;
+    sf::Sound sound;
 };
 
 class FlockMemberComponent: public Component {
 public:
-    FlockMemberComponent()
-      : Component(FlockMemberComponentID) {}
+    FlockMemberComponent() {}
 };
 
-
 class Entity {
-    public:
-        Entity() : components(COMPONENT_COUNT) { }
-        ~Entity() { }
+public:
+    Entity() { }
+    ~Entity() { }
 
-        void addComponent(const std::shared_ptr<Component>& c)
-        {
-            std::cout << "adding component " << c << "\n";
-            if (c) {
-                components[c->getID()] = c;
-            }
+    template <class C>
+    void addComponent(const std::shared_ptr<C>& c)
+    {
+        // LOG: std::cout << "adding component " << c << "\n";
+        components_[Component::getID<C>()] = c;
+    }
+
+    bool hasComponent(ComponentID id) const
+    {
+        if (components_.count(id) == 0) {
+            return false;
         }
+        return true;
+    }
 
-        bool hasComponent(ComponentID id)
-        {
-            if (components[id] == NULL) {
-                return false;
-            }
-            return true;
-        }
+    template <class C>
+    std::shared_ptr<C> getComponent(void)
+    {
+        return std::static_pointer_cast<C>(components_[Component::getID<C>()]);
+    }
 
-        std::shared_ptr<Component> getComponent(ComponentID id)
-        {
-            return components[id];
-        }
-
-    private:
-        std::vector<std::shared_ptr<Component> > components;
+private:
+    std::unordered_map<ComponentID, std::shared_ptr<Component>, EnumClassHash> components_;
 };
 
 } // namespace BAMF

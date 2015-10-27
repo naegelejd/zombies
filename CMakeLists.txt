@@ -4,7 +4,7 @@ project(zombies)
 
 set(CMAKE_BUILD_TYPE Debug)
 
-list(APPEND CMAKE_CXX_FLAGS "-std=c++11")
+list(APPEND CMAKE_CXX_FLAGS "-std=c++11 -Wall")
 
 list(APPEND CMAKE_MODULE_PATH "${CMAKE_SOURCE_DIR}/cmake")
 
@@ -20,9 +20,7 @@ add_executable(zombies
     game.cpp
     configurator.cpp
     resourcer.cpp
+    entity.cpp
     system.cpp)
-    #player.cpp
-    #zombie.cpp
-    #flock.cpp)
 
 target_link_libraries(zombies ${SFML_LIBRARIES} lua)

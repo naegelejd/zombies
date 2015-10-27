@@ -10,108 +10,83 @@
 namespace BAMF {
 
 class System {
-    public:
-        System() { }
-        ~System() { }
+public:
+    System() { }
+    ~System() { }
 
-        virtual void update(void) = 0;
+    virtual void update(void) = 0;
 
-        virtual void addEntity(Entity *e)
-        {
-            for (auto& id : interested) {
-                if (!e->hasComponent(id)) {
-                    return;
-                }
-            }
+    virtual bool isInterested(const std::shared_ptr<Entity>& e) = 0;
+
+    virtual void addEntity(const std::shared_ptr<Entity>& e)
+    {
+        if (isInterested(e)) {
             // LOG: std::cout << "adding entity to system" << std::endl;
             entities.push_back(e);
         }
+    }
 
-    protected:
-        std::set<ComponentID> interested;
-        std::vector<Entity*> entities;
+protected:
+    std::vector<std::shared_ptr<Entity> > entities;
 };
 
 class MovementSystem : public System {
-    public:
-        MovementSystem()
-        {
-            interested.insert(PositionComponentID);
-            interested.insert(VelocityComponentID);
-        }
+public:
+    MovementSystem() {}
+    ~MovementSystem() {}
 
-        ~MovementSystem() { }
-
-        virtual void update(void);
+    virtual void update(void);
+    virtual bool isInterested(const std::shared_ptr<Entity>& e);
 };
 
 class RotationSystem : public System {
-    public:
-        RotationSystem()
-        {
-            interested.insert(VelocityComponentID);
-            interested.insert(RenderableComponentID);
-        }
+public:
+    RotationSystem() {}
+    ~RotationSystem() { }
 
-        ~RotationSystem() { }
-
-        virtual void update(void);
+    virtual void update(void);
+    virtual bool isInterested(const std::shared_ptr<Entity>& e);
 };
 
 class RenderSystem : public System {
-    public:
-        RenderSystem(sf::RenderWindow& win)
-            : window(win)
-        {
-            interested.insert(PositionComponentID);
-            interested.insert(RenderableComponentID);
-        }
+public:
+    RenderSystem(sf::RenderWindow& win)
+      : window(win)
+    { }
+    ~RenderSystem() { }
 
-        ~RenderSystem() { }
+    virtual void update(void);
+    virtual bool isInterested(const std::shared_ptr<Entity>& e);
 
-        virtual void update(void);
-
-    private:
-        sf::RenderWindow& window;
+private:
+    sf::RenderWindow& window;
 };
 
 class InputSystem : public System {
-    public:
-        InputSystem()
-        {
-            interested.insert(VelocityComponentID);
-            interested.insert(InputComponentID);
-        }
+public:
+    InputSystem() {}
+    ~InputSystem() { }
 
-        ~InputSystem() { }
-
-        virtual void update(void);
+    virtual void update(void);
+    virtual bool isInterested(const std::shared_ptr<Entity>& e);
 };
 
 class ButtonSystem : public System {
-    public:
-        ButtonSystem()
-        {
-            interested.insert(ReadableComponentID);
-            interested.insert(InputComponentID);
-        }
+public:
+    ButtonSystem() {}
+    ~ButtonSystem() { }
 
-        ~ButtonSystem() { }
-
-        virtual void update(void);
+    virtual void update(void);
+    virtual bool isInterested(const std::shared_ptr<Entity>& e);
 };
 
 class FlockSystem : public System {
 public:
-    FlockSystem()
-    {
-        interested.insert(VelocityComponentID);
-        interested.insert(FlockMemberComponentID);
-    }
-
+    FlockSystem() {}
     ~FlockSystem() {}
 
     virtual void update(void);
+    virtual bool isInterested(const std::shared_ptr<Entity>& e);
 };
 
 } // namespace BAMF

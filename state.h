@@ -13,34 +13,25 @@ class State {
 
         virtual void update(void)
         {
-            std::vector<System*>::iterator sys_iter;
-            for (sys_iter = systems.begin(); sys_iter != systems.end(); ++sys_iter) {
-                // try to add to every system
-                (*sys_iter)->update();
+            for (auto& sys: systems) {
+                sys->update();
             }
         }
 
-        virtual void addEntity(Entity* entity)
+        virtual void addEntity(const std::shared_ptr<Entity>& entity)
         {
-            std::vector<System*>::iterator sys_iter;
-            for (   sys_iter = systems.begin();
-                    sys_iter != systems.end();
-                    ++sys_iter) {
-                // try to add to every system
-                (*sys_iter)->addEntity(entity);
+            for (auto& sys: systems) {
+                sys->addEntity(entity);
             }
         }
 
-        virtual void addSystem(System* system)
+        virtual void addSystem(const std::shared_ptr<System>& system)
         {
             systems.push_back(system);
         }
 
-    private:
-        State(const State&) = delete;
-        State& operator=(const State&) = delete;
     protected:
-        std::vector<System*> systems;
+        std::vector<std::shared_ptr<System> > systems;
 };
 
 } // namespace BAMF

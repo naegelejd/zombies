@@ -88,45 +88,35 @@ int main(int argc, char *argv[])
     unsigned int width = 512, height = 384;
     game.init(width, height, configurator.getString("title"));
 
-    BAMF::InputSystem is;
-    BAMF::MovementSystem ms;
-    BAMF::RotationSystem rots;
-    BAMF::RenderSystem rs(game.getWindow());
-    BAMF::FlockSystem fs;
+
     BAMF::State playstate;
-    playstate.addSystem(&is);
-    playstate.addSystem(&ms);
-    playstate.addSystem(&rots);
-    playstate.addSystem(&rs);
-    playstate.addSystem(&fs);
 
-    BAMF::Entity player;
-    auto p = std::make_shared<BAMF::PositionComponent>();
-    auto v = std::make_shared<BAMF::VelocityComponent>();
-    auto r = std::make_shared<BAMF::RenderableComponent>(player_sprite);
-    auto i = std::make_shared<BAMF::InputComponent>();
-    player.addComponent(p);
-    player.addComponent(v);
-    player.addComponent(r);
-    player.addComponent(i);
-    playstate.addEntity(&player);
+    playstate.addSystem(std::make_shared<BAMF::InputSystem>());
+    playstate.addSystem(std::make_shared<BAMF::MovementSystem>());
+    playstate.addSystem(std::make_shared<BAMF::RotationSystem>());
+    playstate.addSystem(std::make_shared<BAMF::RenderSystem>(game.getWindow()));
+    playstate.addSystem(std::make_shared<BAMF::FlockSystem>());
 
-    std::vector<BAMF::Entity> zombies(5);
+    //BAMF::Entity player;
+    auto player = std::make_shared<BAMF::Entity>();
+    player->addComponent(std::make_shared<BAMF::PositionComponent>());
+    player->addComponent(std::make_shared<BAMF::VelocityComponent>());
+    player->addComponent(std::make_shared<BAMF::RenderableComponent>(player_sprite));
+    player->addComponent(std::make_shared<BAMF::InputComponent>());
+    playstate.addEntity(player);
+
     std::random_device rd;
     std::mt19937 gen(rd());
     std::uniform_int_distribution<> random_x(0, width);
     std::uniform_int_distribution<> random_y(0, height);
-    for (auto& z: zombies) {
-        auto p = std::make_shared<BAMF::PositionComponent>(random_x(gen), random_y(gen));
-        auto v = std::make_shared<BAMF::VelocityComponent>();
-        auto f = std::make_shared<BAMF::FlockMemberComponent>();
-        auto r = std::make_shared<BAMF::RenderableComponent>(zombie_sprite);
-        z.addComponent(p);
-        z.addComponent(v);
-        z.addComponent(f);
-        z.addComponent(r);
-        std::cout << &z << std::endl;
-        playstate.addEntity(&z);
+    for (int i = 0; i < 5; i++) {
+        auto zomb = std::make_shared<BAMF::Entity>();
+        zomb->addComponent(std::make_shared<BAMF::PositionComponent>(random_x(gen), random_y(gen)));
+        zomb->addComponent(std::make_shared<BAMF::VelocityComponent>());
+        zomb->addComponent(std::make_shared<BAMF::FlockMemberComponent>());
+        zomb->addComponent(std::make_shared<BAMF::RenderableComponent>(zombie_sprite));
+        std::cout << zomb.get() << std::endl;
+        playstate.addEntity(zomb);
     }
 
     game.pushState(&playstate);
@@ -148,18 +138,16 @@ int main(int argc, char *argv[])
 
     sf::Sprite load_sprite(load_texture.getTexture());
 
-    BAMF::Entity load_screen;
-    auto lpc = std::make_shared<BAMF::PositionComponent>();
-    auto lrc = std::make_shared<BAMF::RenderableComponent>(load_sprite);
-    load_screen.addComponent(lpc);
-    load_screen.addComponent(lrc);
-
-    BAMF::RenderSystem lrs(game.getWindow());
-    BAMF::ButtonSystem bs;
     BAMF::State loadstate;
-    loadstate.addSystem(&lrs);
-    loadstate.addSystem(&bs);
-    loadstate.addEntity(&load_screen);
+    loadstate.addSystem(std::make_shared<BAMF::RenderSystem>(game.getWindow()));
+    loadstate.addSystem(std::make_shared<BAMF::ButtonSystem>());
+
+    // BAMF::Entity load_screen;
+    auto load_screen = std::make_shared<BAMF::Entity>();
+    load_screen->addComponent(std::make_shared<BAMF::PositionComponent>());
+    load_screen->addComponent(std::make_shared<BAMF::RenderableComponent>(load_sprite));
+
+    loadstate.addEntity(load_screen);
 
     game.pushState(&loadstate);
 
